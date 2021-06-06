@@ -1,0 +1,3 @@
+   routes --> for api call and to move from one page to another 
+   models --> for database and its storage 
+    controller --> for logic and for ui interaction logic
