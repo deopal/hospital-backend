@@ -220,14 +220,15 @@ exports.contact = (req, res) => {
 		}
 		 if(err)
 		 {
-			const { userId, name, email,number,message } = req.body;
+			const { userId, name, email,number,message ,role} = req.body;
 			const _contact = new Contact({
 		
-			  uniqueAppointment: shortid.generate(),	  
+				uniqueContact: shortid.generate(),	  
 			  userId:userId,
 			   name:name,
 			   email:email,
 			   number:number,
+			   role:role,
 			   message:message
 			});
 		
@@ -288,3 +289,20 @@ exports.contact = (req, res) => {
 				  });
 			}) ; 
 	};	
+
+	exports.uploadImage =(req, res) => {
+		const { image}  = req.body;
+		console.log(image);
+		Patient.findById(req.params.id).exec(async (error, patient) => {
+			if (patient)
+			{
+				patient.image=image;
+				patient.save();
+			  return res.json({
+				message: "profile pic updated",
+				patient:patient
+			  });
+			};
+			return res.send('something went wrong');
+		});
+	};

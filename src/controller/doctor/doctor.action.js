@@ -130,13 +130,14 @@ exports.contact = (req, res) => {
 			}
 			 if(err)
 			 {
-				const { patientId, name, email,number,message } = req.body;
+				const { userId, name, email,number,message,role } = req.body;
 				const _contact = new Contact({
 			
-				  uniqueAppointment: shortid.generate(),	  
+					uniqueContact: shortid.generate(),	  
 				  userId:userId,
 				   name:name,
 				   email:email,
+				   role:role,
 				   number:number,
 				   message:message
 				});
@@ -197,6 +198,23 @@ exports.contact = (req, res) => {
 					  });
 				}) ; 
 		};	
+
+
+		exports.uploadImage =(req, res) => {
+			const { image } = req.body;
+			Doctor.findById(req.params.id).exec(async (error, doctor) => {
+				if (doctor)
+				{
+					doctor.image=image;
+					doctor.save();
+				  return res.json({
+					message: "profile pic updated",
+					doctor:doctor
+				  });
+				};
+				return res.send('something went wrong');
+			});
+		};
 
     		
 		

@@ -45,6 +45,9 @@ const patientSchema = new mongoose.Schema(
       enum: ["patient", "doctor"],
       default: "patient",
     },
+    image:{
+      type:String
+    },
 
     gender: {
       type: String,

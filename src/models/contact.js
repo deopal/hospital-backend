@@ -15,12 +15,14 @@ const contactSchema = new mongoose.Schema(
         type: String,
         required: true,
     },
+    role:{
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         required: true,
         trim: true,
-        unique: true,
-        lowercase: true,
       },
   name:{
       type:String,
