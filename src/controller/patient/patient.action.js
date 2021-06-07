@@ -57,12 +57,13 @@ exports.makeAppointment = (req, res) => {
 			  });
 		}
 	
-		const { patientId,doctorId,patientName, age, adharNumber,number, gender, healthProblems, previousRecords} = req.body;
+		const { patientId,doctorId,patientName, doctorName,age, adharNumber,number, gender, healthProblems, previousRecords} = req.body;
 		const _appointment = new Appointment({
 		  patientId: patientId,
 		  uniqueAppointment: shortid.generate(),
 		  doctorId: doctorId,
 		  patientName: patientName,
+		  doctorName: doctorName,
 		  age: age,
 		  adharNumber: adharNumber,
 		  number: number,
@@ -272,7 +273,7 @@ exports.contact = (req, res) => {
 				if (patient) {
 					var arr = patient.notification;
 					var index = arr.findIndex(function(a){
-						return a.a_id === appointmentId;
+						return a.a_id == appointmentId;
 				   })
 				   if (index !== -1) {
 					console.log(index);

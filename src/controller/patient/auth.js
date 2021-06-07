@@ -65,7 +65,7 @@ exports.signin = (req, res) => {
         });
       } else {
         return res.json({
-          error: "Something went wrong",
+          error: "INVALID CREDENTIAL",
         });
       }
     } 

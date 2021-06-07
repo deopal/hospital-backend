@@ -64,7 +64,7 @@ exports.approveAppointments = (req, res) => {
           appointment.save();
 		  const dNotification={
 			a_id : appointment._id,
-			messaage : `${appointment.doctorName} has approved your appointment. ` 
+			message : `${appointment.doctorName} has approved your appointment. ` 
 		   };
 
 		Patient.findById(req.body.patientId).exec(async (error, patient) => {
@@ -182,9 +182,7 @@ exports.contact = (req, res) => {
 					if (doctor) {
 						var arr = doctor.notification;
 						var index = arr.findIndex(function(a){
-							console.log(a.a_id);
-							console.log(appointmentId);
-							return a.a_id === appointmentId;
+							return a.a_id == appointmentId;
 					   })
 					   
 					   if (index !== -1){
