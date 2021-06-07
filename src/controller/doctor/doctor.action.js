@@ -72,6 +72,7 @@ exports.approveAppointments = (req, res) => {
 			{
 				patient.notification.push(dNotification);
 				patient.save();
+				console.log(patient.notification);
 			  }});
 		  return res.json({
 			message: "Appointment for this patient is approved",
@@ -181,11 +182,19 @@ exports.contact = (req, res) => {
 					if (doctor) {
 						var arr = doctor.notification;
 						var index = arr.findIndex(function(a){
+							console.log(a.a_id);
+							console.log(appointmentId);
 							return a.a_id === appointmentId;
 					   })
-					   if (index !== -1) 
+					   
+					   if (index !== -1){
+						console.log(index);
 					       arr.splice(index, 1);
+						   doctor.notification=arr;
+						doctor.save();
+					}
 					       return res.json({
+							notification:doctor.notification,
 							message : " Notification removed successfully.",
 						  });
 						}	   

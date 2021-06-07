@@ -84,7 +84,7 @@ exports.makeAppointment = (req, res) => {
 			const dNotification={
 
 				a_id : data._id,
-				messaage : `${patientName} has requsted an appointment ` 
+				message : `${patientName} has requested an appointment ` 
 			   };
 
 			Doctor.findById(doctorId).exec(async (error, doctor) => {
@@ -274,9 +274,15 @@ exports.contact = (req, res) => {
 					var index = arr.findIndex(function(a){
 						return a.a_id === appointmentId;
 				   })
-				   if (index !== -1) 
-					   arr.splice(index, 1);
+				   if (index !== -1) {
+					console.log(index);
+					arr.splice(index, 1);
+					patient.notification=arr;
+					patient.save();
+				   }
+				   
 					   return res.json({
+						notification:patient.notification,
 						message : " Notification removed successfully.",
 					  });
 					}	   
