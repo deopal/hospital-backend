@@ -45,7 +45,7 @@ app.use("/api", doctorOperationRoutes);
 app.use("/api", patientRoutes);
 app.use("/api", patientOperationRoutes);
 
-const PORT =process.env.PORT || 5000;
+const PORT =process.env.PORT || 2000;
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

@@ -2,9 +2,9 @@
   "name": "mern-back-end",
   "version": "1.0.0",
   "description": "This is backend for hospital website",
-  "main": "index.js",
+  "main": "index.server.js",
   "scripts": {
-    "start": "nodemon ./src/index.server.js"
+    "start": "node index.server.js"
   },
   "keywords": [
     "ecommerce",
