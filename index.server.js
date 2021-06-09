@@ -7,11 +7,11 @@ const cors = require("cors");
 
 //routes
 
-const patientRoutes = require("./routes/patient/auth");
-const doctorRoutes = require("./routes/doctor/auth");
+const patientRoutes = require("./src/routes/patient/auth");
+const doctorRoutes = require("./src/routes/doctor/auth");
 
-const patientOperationRoutes = require("./routes/patient/operation");
-const doctorOperationRoutes =require("./routes/doctor/operation");
+const patientOperationRoutes = require("./src/routes/patient/operation");
+const doctorOperationRoutes =require("./src/routes/doctor/operation");
 
 
 //environment variable or you can say constants
@@ -44,6 +44,8 @@ app.use("/api", doctorRoutes);
 app.use("/api", doctorOperationRoutes);
 app.use("/api", patientRoutes);
 app.use("/api", patientOperationRoutes);
+
+const PORT =process.env.PORT || 5000;
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
