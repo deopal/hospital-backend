@@ -4,6 +4,10 @@
  */
 
 import mongoose from 'mongoose';
+import dns from 'dns';
+
+// Use Google DNS for Railway deployment (fixes SRV record resolution)
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const getMongoUri = () => {
   if (process.env.MONGO_URI) {
