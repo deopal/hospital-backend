@@ -167,8 +167,11 @@ export const initializeVideoSocket = (io) => {
      */
     socket.on('end-call', async (data) => {
       try {
-        const { roomId } = data;
-        const userType = socket.userData?.userType;
+        const { roomId, userType: eventUserType } = data;
+        // Use userType from event data as primary, fallback to socket.userData
+        const userType = eventUserType || socket.userData?.userType;
+
+        console.log(`[Video Socket] End call request - roomId: ${roomId}, userType: ${userType}`);
 
         if (roomId && userType) {
           await endVideoRoom(roomId, userType);
@@ -184,6 +187,8 @@ export const initializeVideoSocket = (io) => {
           roomSockets.forEach(s => s.leave(roomId));
 
           console.log(`[Video Socket] Call ended in room ${roomId} by ${userType}`);
+        } else {
+          console.error(`[Video Socket] End call failed - missing roomId (${roomId}) or userType (${userType})`);
         }
       } catch (error) {
         console.error('[Video Socket] Error ending call:', error);
