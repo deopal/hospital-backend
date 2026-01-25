@@ -7,8 +7,20 @@
 
 import webpush from 'web-push';
 import { BaseChannel } from './base.channel.js';
-import Patient from '../../../models/user/patient.model.js';
-import Doctor from '../../../models/user/doctor.model.js';
+
+// Lazy load models to avoid circular dependency issues at startup
+let Patient = null;
+let Doctor = null;
+
+const loadModels = async () => {
+  if (!Patient || !Doctor) {
+    const patientModule = await import('../../../models/user/patient.model.js');
+    const doctorModule = await import('../../../models/user/doctor.model.js');
+    Patient = patientModule.default;
+    Doctor = doctorModule.default;
+  }
+  return { Patient, Doctor };
+};
 
 export class PushChannel extends BaseChannel {
   constructor(config = {}) {
@@ -118,6 +130,7 @@ export class PushChannel extends BaseChannel {
    */
   async getPushSubscription(recipientId, recipientType) {
     try {
+      const { Patient, Doctor } = await loadModels();
       let user;
 
       if (recipientType === 'Patients' || recipientType === 'patient') {
@@ -151,6 +164,7 @@ export class PushChannel extends BaseChannel {
    */
   async removeInvalidSubscription(recipientId, recipientType) {
     try {
+      const { Patient, Doctor } = await loadModels();
       if (recipientType === 'Patients' || recipientType === 'patient') {
         await Patient.findByIdAndUpdate(recipientId, {
           $unset: { pushSubscription: 1 }
