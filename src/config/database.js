@@ -3,16 +3,21 @@
  * Handles MongoDB connection setup
  */
 
-import mongoose from 'mongoose';
 import dns from 'dns';
+import mongoose from 'mongoose';
 
 // Use Google DNS for Railway deployment (fixes SRV record resolution)
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const getMongoUri = () => {
-  if (process.env.MONGO_URI) {
-    return process.env.MONGO_URI;
-  }
+  // // Railway MongoDB plugin uses MONGO_URL
+  // if (process.env.MONGO_URL) {
+  //   return process.env.MONGO_URL;
+  // }
+
+  // if (process.env.MONGO_URI) {
+  //   return process.env.MONGO_URI;
+  // }
 
   const { MONGO_DB_USER, MONGO_DB_PASSWORD, MONGO_DB_DATABASE } = process.env;
   return `mongodb+srv://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@cluster0.ubtyv.mongodb.net/${MONGO_DB_DATABASE}?retryWrites=true&w=majority`;
