@@ -6,6 +6,8 @@
 import { getNotifications, markAsRead, markAllAsRead, deleteNotification } from '../services/notification/notification.service.js';
 import { successResponse, errorResponse, notFoundResponse } from '../utils/response.util.js';
 import { RecipientType, Pagination } from '../config/constants.js';
+import Patient from '../models/user/patient.model.js';
+import Doctor from '../models/user/doctor.model.js';
 
 /**
  * Get notifications for doctor
@@ -153,6 +155,76 @@ export const removePatientNotification = async (req, res) => {
   }
 };
 
+/**
+ * Save push subscription for patient
+ */
+export const savePatientPushSubscription = async (req, res) => {
+  try {
+    const { patientId, subscription } = req.body;
+
+    if (!subscription || !subscription.endpoint) {
+      return errorResponse(res, 'Invalid subscription data');
+    }
+
+    await Patient.findByIdAndUpdate(patientId, {
+      pushSubscription: {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: subscription.keys.p256dh,
+          auth: subscription.keys.auth
+        }
+      }
+    });
+
+    return successResponse(res, {}, 'Push subscription saved successfully');
+  } catch (error) {
+    console.error('Save patient push subscription error:', error);
+    return errorResponse(res, 'Failed to save push subscription');
+  }
+};
+
+/**
+ * Save push subscription for doctor
+ */
+export const saveDoctorPushSubscription = async (req, res) => {
+  try {
+    const { doctorId, subscription } = req.body;
+
+    if (!subscription || !subscription.endpoint) {
+      return errorResponse(res, 'Invalid subscription data');
+    }
+
+    await Doctor.findByIdAndUpdate(doctorId, {
+      pushSubscription: {
+        endpoint: subscription.endpoint,
+        keys: {
+          p256dh: subscription.keys.p256dh,
+          auth: subscription.keys.auth
+        }
+      }
+    });
+
+    return successResponse(res, {}, 'Push subscription saved successfully');
+  } catch (error) {
+    console.error('Save doctor push subscription error:', error);
+    return errorResponse(res, 'Failed to save push subscription');
+  }
+};
+
+/**
+ * Get VAPID public key
+ */
+export const getVapidPublicKey = async (req, res) => {
+  try {
+    return successResponse(res, {
+      publicKey: process.env.VAPID_PUBLIC_KEY
+    });
+  } catch (error) {
+    console.error('Get VAPID public key error:', error);
+    return errorResponse(res, 'Failed to get VAPID public key');
+  }
+};
+
 export default {
   getDoctorNotifications,
   getPatientNotifications,
@@ -161,5 +233,8 @@ export default {
   markAllDoctorNotificationsRead,
   markAllPatientNotificationsRead,
   removeDoctorNotification,
-  removePatientNotification
+  removePatientNotification,
+  savePatientPushSubscription,
+  saveDoctorPushSubscription,
+  getVapidPublicKey
 };

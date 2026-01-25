@@ -119,6 +119,13 @@ const doctorSchema = new Schema(
     },
     passwordResetExpires: {
       type: Date
+    },
+    pushSubscription: {
+      endpoint: String,
+      keys: {
+        p256dh: String,
+        auth: String
+      }
     }
   },
   { timestamps: true }

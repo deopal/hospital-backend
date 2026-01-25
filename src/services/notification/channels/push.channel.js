@@ -1,16 +1,14 @@
 /**
  * Push Notification Channel
  *
- * Sends push notifications to mobile/web apps.
- * Currently a placeholder - implement with your preferred push service:
- * - Firebase Cloud Messaging (FCM)
- * - Apple Push Notification Service (APNs)
- * - OneSignal
- * - Pusher
- * - etc.
+ * Sends Web Push notifications to browsers using the Web Push API.
+ * Uses the web-push library with VAPID authentication.
  */
 
+import webpush from 'web-push';
 import { BaseChannel } from './base.channel.js';
+import Patient from '../../../models/user/patient.model.js';
+import Doctor from '../../../models/user/doctor.model.js';
 
 export class PushChannel extends BaseChannel {
   constructor(config = {}) {
@@ -21,8 +19,27 @@ export class PushChannel extends BaseChannel {
       ...config
     };
 
-    // Disabled by default until configured
-    this.enabled = false;
+    // Initialize web-push with VAPID keys
+    this.initializeWebPush();
+
+    // Enabled if VAPID keys are configured
+    this.enabled = !!(process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY);
+  }
+
+  /**
+   * Initialize web-push with VAPID details
+   */
+  initializeWebPush() {
+    if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+      webpush.setVapidDetails(
+        process.env.VAPID_EMAIL || 'mailto:admin@hospital.com',
+        process.env.VAPID_PUBLIC_KEY,
+        process.env.VAPID_PRIVATE_KEY
+      );
+      console.log('[Push Channel] Web Push initialized with VAPID keys');
+    } else {
+      console.warn('[Push Channel] VAPID keys not configured - push notifications disabled');
+    }
   }
 
   /**
@@ -33,44 +50,57 @@ export class PushChannel extends BaseChannel {
    */
   async send(notification) {
     try {
-      const { recipientId, recipientType, title, message, metadata } = notification;
+      const { recipientId, recipientType, title, message, type, data } = notification;
 
-      // Get recipient's device tokens
-      const deviceTokens = await this.getDeviceTokens(recipientId, recipientType);
+      // Get recipient's push subscription from database
+      const subscription = await this.getPushSubscription(recipientId, recipientType);
 
-      if (!deviceTokens || deviceTokens.length === 0) {
+      if (!subscription || !subscription.endpoint) {
         return {
           success: false,
           channel: this.name,
-          error: 'No device tokens found for recipient'
+          error: 'No push subscription found for recipient'
         };
       }
 
-      // TODO: Implement actual push notification sending
-      // Example with Firebase Cloud Messaging:
-      //
-      // const admin = require('firebase-admin');
-      // await admin.messaging().sendMulticast({
-      //   tokens: deviceTokens,
-      //   notification: {
-      //     title: title,
-      //     body: message
-      //   },
-      //   data: metadata
-      // });
+      // Prepare the push payload
+      const payload = JSON.stringify({
+        title: title || 'CareSync Notification',
+        body: message,
+        icon: '/logo192.png',
+        badge: '/logo192.png',
+        type: type,
+        data: data || {},
+        timestamp: Date.now()
+      });
 
-      console.log(`[${this.name}] Push notification would be sent to ${deviceTokens.length} devices`);
-      console.log(`[${this.name}] Title: ${title}`);
-      console.log(`[${this.name}] Message: ${message}`);
+      // Send the push notification
+      await webpush.sendNotification(subscription, payload);
+
+      console.log(`[${this.name}] Push notification sent successfully to ${recipientType}`);
 
       return {
         success: true,
         channel: this.name,
-        devicesNotified: deviceTokens.length,
-        message: 'Push notification logged (not actually sent - implement push service)'
+        message: 'Push notification sent successfully'
       };
     } catch (error) {
       console.error(`[${this.name}] Failed to send push notification:`, error);
+
+      // Handle expired subscriptions (user unsubscribed)
+      if (error.statusCode === 410 || error.statusCode === 404) {
+        // Remove invalid subscription from database
+        await this.removeInvalidSubscription(
+          notification.recipientId,
+          notification.recipientType
+        );
+        return {
+          success: false,
+          channel: this.name,
+          error: 'Subscription expired or invalid - removed from database'
+        };
+      }
+
       return {
         success: false,
         channel: this.name,
@@ -80,16 +110,60 @@ export class PushChannel extends BaseChannel {
   }
 
   /**
-   * Get recipient's device tokens
+   * Get recipient's push subscription from database
    *
    * @param {string} recipientId - The recipient's ID
    * @param {string} recipientType - The recipient type (Doctors/Patients)
-   * @returns {Promise<string[]>} Array of device tokens
+   * @returns {Promise<Object|null>} Push subscription object
    */
-  async getDeviceTokens(recipientId, recipientType) {
-    // TODO: Implement device token lookup from database
-    // You'll need to store device tokens when users log in from mobile/web apps
-    return [];
+  async getPushSubscription(recipientId, recipientType) {
+    try {
+      let user;
+
+      if (recipientType === 'Patients' || recipientType === 'patient') {
+        user = await Patient.findById(recipientId).select('pushSubscription');
+      } else if (recipientType === 'Doctors' || recipientType === 'doctor') {
+        user = await Doctor.findById(recipientId).select('pushSubscription');
+      }
+
+      if (user && user.pushSubscription && user.pushSubscription.endpoint) {
+        return {
+          endpoint: user.pushSubscription.endpoint,
+          keys: {
+            p256dh: user.pushSubscription.keys.p256dh,
+            auth: user.pushSubscription.keys.auth
+          }
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error(`[${this.name}] Error fetching push subscription:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Remove invalid subscription from database
+   *
+   * @param {string} recipientId - The recipient's ID
+   * @param {string} recipientType - The recipient type
+   */
+  async removeInvalidSubscription(recipientId, recipientType) {
+    try {
+      if (recipientType === 'Patients' || recipientType === 'patient') {
+        await Patient.findByIdAndUpdate(recipientId, {
+          $unset: { pushSubscription: 1 }
+        });
+      } else if (recipientType === 'Doctors' || recipientType === 'doctor') {
+        await Doctor.findByIdAndUpdate(recipientId, {
+          $unset: { pushSubscription: 1 }
+        });
+      }
+      console.log(`[${this.name}] Removed invalid subscription for ${recipientType} ${recipientId}`);
+    } catch (error) {
+      console.error(`[${this.name}] Error removing invalid subscription:`, error);
+    }
   }
 
   /**
@@ -103,19 +177,21 @@ export class PushChannel extends BaseChannel {
       return false;
     }
 
-    // Push notifications for most types (except maybe messages)
+    // Push notifications for important notification types
     const pushEnabledTypes = [
       'appointment_request',
       'appointment_approved',
       'appointment_completed',
       'appointment_cancelled',
-      'reminder'
+      'video_call_started',
+      'reminder',
+      'new_message'
     ];
 
     return pushEnabledTypes.includes(notification.type);
   }
 }
 
-// Export singleton instance (disabled by default)
+// Export singleton instance
 export const pushChannel = new PushChannel();
 export default pushChannel;

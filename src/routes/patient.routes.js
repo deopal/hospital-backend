@@ -20,7 +20,9 @@ import {
   getPatientNotifications,
   markPatientNotificationRead,
   markAllPatientNotificationsRead,
-  removePatientNotification
+  removePatientNotification,
+  savePatientPushSubscription,
+  getVapidPublicKey
 } from '../controllers/notification.controller.js';
 import { contact } from '../controllers/contact.controller.js';
 import { uploadReports } from '../common-middleware/upload.middleware.js';
@@ -48,6 +50,10 @@ router.get('/patient/getNotification/:id', getPatientNotifications);
 router.post('/patient/markNotificationRead', markPatientNotificationRead);
 router.post('/patient/markAllNotificationsRead', markAllPatientNotificationsRead);
 router.post('/patient/removeNotification', removePatientNotification);
+
+// Push notifications
+router.get('/patient/vapidPublicKey', getVapidPublicKey);
+router.post('/patient/savePushSubscription', savePatientPushSubscription);
 
 // Contact
 router.post('/patient/contact', contact);

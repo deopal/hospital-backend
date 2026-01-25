@@ -21,7 +21,9 @@ import {
   getDoctorNotifications,
   markDoctorNotificationRead,
   markAllDoctorNotificationsRead,
-  removeDoctorNotification
+  removeDoctorNotification,
+  saveDoctorPushSubscription,
+  getVapidPublicKey
 } from '../controllers/notification.controller.js';
 import { contact } from '../controllers/contact.controller.js';
 
@@ -51,6 +53,10 @@ router.get('/doctor/getNotification/:id', getDoctorNotifications);
 router.post('/doctor/markNotificationRead', markDoctorNotificationRead);
 router.post('/doctor/markAllNotificationsRead', markAllDoctorNotificationsRead);
 router.post('/doctor/removeNotification', removeDoctorNotification);
+
+// Push notifications
+router.get('/doctor/vapidPublicKey', getVapidPublicKey);
+router.post('/doctor/savePushSubscription', saveDoctorPushSubscription);
 
 // Contact
 router.post('/doctor/contact', contact);
