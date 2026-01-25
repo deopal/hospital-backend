@@ -39,6 +39,20 @@ export const initializeVideoSocket = (io) => {
           return;
         }
 
+        // Import repository to check room status before joining
+        const { videoRoomRepository } = await import('../../repositories/index.js');
+        const room = await videoRoomRepository.findByRoomId(roomId);
+
+        if (!room) {
+          socket.emit('error', { message: 'Video room not found' });
+          return;
+        }
+
+        if (room.status === 'ended') {
+          socket.emit('error', { message: 'This video consultation has already ended' });
+          return;
+        }
+
         // Store user data
         socket.userData = { userId, userType, userName };
         socket.currentRoom = roomId;
