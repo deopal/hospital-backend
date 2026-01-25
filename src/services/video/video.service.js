@@ -5,8 +5,9 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { videoRoomRepository, appointmentRepository, notificationRepository } from '../../repositories/index.js';
+import { videoRoomRepository, appointmentRepository } from '../../repositories/index.js';
 import { AppointmentStatus, NotificationType, RecipientType } from '../../config/constants.js';
+import { createNotification } from '../notification/notification.service.js';
 
 /**
  * Create a new video room for an appointment
@@ -51,7 +52,7 @@ export const createVideoRoom = async (appointmentId, startedBy) => {
     ? (appointment.patientId._id || appointment.patientId)
     : (appointment.doctorId._id || appointment.doctorId);
 
-  await notificationRepository.create({
+  await createNotification({
     recipientId,
     recipientType,
     type: NotificationType.VIDEO_CALL_STARTED,
@@ -166,7 +167,7 @@ export const endVideoRoom = async (roomId, endedBy) => {
   const recipientType = endedBy === 'doctor' ? RecipientType.PATIENT : RecipientType.DOCTOR;
   const recipientId = endedBy === 'doctor' ? room.patientId._id : room.doctorId._id;
 
-  await notificationRepository.create({
+  await createNotification({
     recipientId,
     recipientType,
     type: NotificationType.VIDEO_CALL_ENDED,
