@@ -103,13 +103,42 @@ class NotificationDispatcher {
       };
     }
 
-    // Process all channels concurrently
-    const channelPromises = enabledChannels.map(async (channel) => {
+    // First, run inApp channel to save to database and get the _id
+    // This ensures other channels (like SSE) have the correct notification ID
+    const inAppChannel = this.getChannel('inapp');
+    let savedNotification = notification;
+
+    if (inAppChannel && inAppChannel.isEnabled()) {
+      try {
+        const canHandle = await inAppChannel.canHandle(notification);
+        if (canHandle) {
+          const inAppResult = await inAppChannel.send(notification);
+          results.channels['inapp'] = inAppResult;
+
+          // Use the saved notification with _id for other channels
+          if (inAppResult.success && inAppResult.notification) {
+            savedNotification = {
+              ...notification,
+              _id: inAppResult.notification._id,
+              createdAt: inAppResult.notification.createdAt
+            };
+          }
+        }
+      } catch (error) {
+        console.error('[Dispatcher] Error in inapp channel:', error);
+        results.channels['inapp'] = { success: false, error: error.message };
+      }
+    }
+
+    // Process remaining channels concurrently (excluding inapp which already ran)
+    const otherChannels = enabledChannels.filter(c => c.getName() !== 'inapp');
+
+    const channelPromises = otherChannels.map(async (channel) => {
       const channelName = channel.getName();
 
       try {
         // Check if channel can handle this notification
-        const canHandle = await channel.canHandle(notification);
+        const canHandle = await channel.canHandle(savedNotification);
 
         if (!canHandle) {
           return {
@@ -118,8 +147,8 @@ class NotificationDispatcher {
           };
         }
 
-        // Send through channel
-        const result = await channel.send(notification);
+        // Send through channel with saved notification (includes _id)
+        const result = await channel.send(savedNotification);
         return { channelName, result };
       } catch (error) {
         console.error(`[Dispatcher] Error in channel ${channelName}:`, error);
@@ -130,12 +159,12 @@ class NotificationDispatcher {
       }
     });
 
-    // Wait for all channels to complete
+    // Wait for all other channels to complete
     const channelResults = await Promise.all(channelPromises);
 
     // Compile results
-    let hasSuccess = false;
-    let hasFailure = false;
+    let hasSuccess = results.channels['inapp']?.success || false;
+    let hasFailure = results.channels['inapp']?.success === false;
 
     channelResults.forEach(({ channelName, result }) => {
       results.channels[channelName] = result;
