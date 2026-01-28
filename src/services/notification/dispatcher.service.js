@@ -16,6 +16,7 @@ import { inAppChannel } from './channels/inapp.channel.js';
 import { emailChannel } from './channels/email.channel.js';
 import { smsChannel } from './channels/sms.channel.js';
 import { pushChannel } from './channels/push.channel.js';
+import { sseChannel } from './channels/sse.channel.js';
 
 class NotificationDispatcher {
   constructor() {
@@ -27,6 +28,7 @@ class NotificationDispatcher {
     this.registerChannel(emailChannel);
     this.registerChannel(smsChannel);
     this.registerChannel(pushChannel);
+    this.registerChannel(sseChannel);
   }
 
   /**

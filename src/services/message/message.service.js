@@ -5,6 +5,7 @@
 
 import mongoose from 'mongoose';
 import { messageRepository, appointmentRepository } from '../../repositories/index.js';
+import { sendToUser } from '../sse/sse.service.js';
 
 const { ObjectId } = mongoose.Types;
 
@@ -64,6 +65,21 @@ export const sendMessage = async (messageData) => {
 
   // Create message
   const message = await messageRepository.createMessage(messagePayload);
+
+  // Send real-time SSE notification to the recipient
+  const recipientId = senderType === 'Doctors'
+    ? appointment.patientId.toString()
+    : appointment.doctorId.toString();
+
+  sendToUser(recipientId, 'message', {
+    _id: message._id,
+    appointmentId: message.appointmentId,
+    senderId: message.senderId,
+    senderType: message.senderType,
+    content: message.content,
+    attachment: message.attachment || null,
+    createdAt: message.createdAt
+  });
 
   return {
     success: true,

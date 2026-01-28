@@ -10,6 +10,7 @@ import patientRoutes from './patient.routes.js';
 import messageRoutes from './message.routes.js';
 import adminRoutes from './admin.routes.js';
 import videoRoutes from './video.routes.js';
+import sseRoutes from './sse.routes.js';
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use(patientRoutes);
 router.use(messageRoutes);
 router.use(adminRoutes);
 router.use(videoRoutes);
+router.use('/sse', sseRoutes);
 
 export default router;
