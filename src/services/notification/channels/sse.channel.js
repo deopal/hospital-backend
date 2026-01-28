@@ -21,7 +21,7 @@ export class SSEChannel extends BaseChannel {
    */
   async send(notification) {
     try {
-      const { recipientId, recipientType, title, message, type, data, metadata, _id, createdAt } = notification;
+      const { recipientId, recipientType, title, message, type, data, metadata, _id, createdAt, appointmentId } = notification;
 
       // Convert recipientType to lowercase for SSE client lookup
       // (stored as 'Patients'/'Doctors' but SSE uses 'patient'/'doctor')
@@ -32,6 +32,7 @@ export class SSEChannel extends BaseChannel {
         title,
         message,
         type,
+        appointmentId: appointmentId || null,
         data: data || metadata || {},
         isRead: false,
         createdAt: createdAt || new Date().toISOString()
