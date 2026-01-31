@@ -44,7 +44,7 @@ export class PushChannel extends BaseChannel {
   initializeWebPush() {
     if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
       webpush.setVapidDetails(
-        process.env.VAPID_EMAIL || 'mailto:admin@hospital.com',
+        process.env.VAPID_EMAIL || 'mailto:healorbit.noreply@gmail.com',
         process.env.VAPID_PUBLIC_KEY,
         process.env.VAPID_PRIVATE_KEY
       );

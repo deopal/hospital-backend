@@ -6,6 +6,9 @@
 // User models
 export { Doctor, Patient } from './user/index.js';
 
+// Admin models
+export { Admin } from './admin/index.js';
+
 // Appointment models
 export { Appointment } from './appointment/index.js';
 

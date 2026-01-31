@@ -19,13 +19,43 @@ class DoctorRepository extends BaseRepository {
   }
 
   /**
-   * Find all active doctors
+   * Find all active and approved doctors (for patient listing)
    */
   async findAllActive(options = {}) {
     return await this.find(
-      { isActive: true },
+      { isActive: true, approvalStatus: 'approved' },
       { select: '-hash_password', ...options }
     );
+  }
+
+  /**
+   * Find all pending approval doctors (for admin)
+   */
+  async findPendingApproval(options = {}) {
+    return await this.find(
+      { approvalStatus: 'pending' },
+      { select: '-hash_password', ...options }
+    );
+  }
+
+  /**
+   * Approve a doctor
+   */
+  async approveDoctor(id) {
+    return await this.updateById(id, {
+      approvalStatus: 'approved',
+      approvalDate: new Date()
+    }, { select: '-hash_password' });
+  }
+
+  /**
+   * Reject a doctor
+   */
+  async rejectDoctor(id, reason) {
+    return await this.updateById(id, {
+      approvalStatus: 'rejected',
+      rejectionReason: reason
+    }, { select: '-hash_password' });
   }
 
   /**

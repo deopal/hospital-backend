@@ -14,10 +14,13 @@ export const UserRole = Object.freeze({
 export const ModelName = Object.freeze({
   DOCTOR: 'Doctors',
   PATIENT: 'Patients',
+  ADMIN: 'Admins',
   APPOINTMENT: 'Appointments',
   NOTIFICATION: 'Notifications',
   CONTACT: 'Contacts',
-  VIDEO_ROOM: 'VideoRooms'
+  VIDEO_ROOM: 'VideoRooms',
+  SYMPTOM_CHECK: 'SymptomChecks',
+  QUEUE: 'Queues'
 });
 
 // Appointment statuses
@@ -52,6 +55,38 @@ export const VideoRoomStatus = Object.freeze({
 export const RecipientType = Object.freeze({
   DOCTOR: 'Doctors',
   PATIENT: 'Patients'
+});
+
+// Queue statuses
+export const QueueStatus = Object.freeze({
+  OPEN: 'open',
+  CLOSED: 'closed',
+  PAUSED: 'paused'
+});
+
+// Queue entry statuses
+export const QueueEntryStatus = Object.freeze({
+  WAITING: 'waiting',
+  SERVING: 'serving',
+  COMPLETED: 'completed',
+  SKIPPED: 'skipped',
+  CANCELLED: 'cancelled'
+});
+
+// Symptom severity levels
+export const SymptomSeverity = Object.freeze({
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high'
+});
+
+// Admin permissions
+export const AdminPermission = Object.freeze({
+  MANAGE_DOCTORS: 'manage_doctors',
+  MANAGE_PATIENTS: 'manage_patients',
+  VIEW_ANALYTICS: 'view_analytics',
+  MANAGE_APPOINTMENTS: 'manage_appointments',
+  MANAGE_CONTACTS: 'manage_contacts'
 });
 
 // Pagination defaults

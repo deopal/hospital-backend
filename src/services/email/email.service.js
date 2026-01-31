@@ -9,7 +9,7 @@
 const EMAIL_CONFIG = {
   brevoApiKey: process.env.BREVO_API_KEY,
   from: {
-    email: process.env.EMAIL_FROM_ADDRESS || 'noreply@healorbit.com',
+    email: process.env.EMAIL_FROM_ADDRESS || 'healorbit.noreply@gmail.com',
     name: process.env.EMAIL_FROM_NAME || 'HealOrbit'
   }
 };

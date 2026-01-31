@@ -14,7 +14,9 @@ import {
   getReviews,
   completeAppointmentHandler,
   cancelAppointmentHandler,
-  downloadPrescription
+  downloadPrescription,
+  getMedicalHistoryHandler,
+  getTimelineHandler
 } from '../controllers/patient.controller.js';
 import {
   getPatientNotifications,
@@ -44,6 +46,10 @@ router.get('/patient/prescription/:id', downloadPrescription);
 
 // Reviews
 router.get('/patient/getReviews/:id', getReviews);
+
+// Medical History & Timeline
+router.get('/patient/medical-history/:id', getMedicalHistoryHandler);
+router.get('/patient/timeline/:id', getTimelineHandler);
 
 // Notifications
 router.get('/patient/getNotification/:id', getPatientNotifications);

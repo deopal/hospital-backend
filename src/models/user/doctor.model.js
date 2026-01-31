@@ -110,6 +110,17 @@ const doctorSchema = new Schema(
       type: Boolean,
       default: false
     },
+    approvalStatus: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending'
+    },
+    approvalDate: {
+      type: Date
+    },
+    rejectionReason: {
+      type: String
+    },
     isActive: {
       type: Boolean,
       default: true

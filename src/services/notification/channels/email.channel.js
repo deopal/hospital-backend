@@ -22,7 +22,7 @@ export class EmailChannel extends BaseChannel {
 
     // Email service configuration
     this.config = {
-      from: config.from || process.env.EMAIL_FROM || 'HealOrbit <noreply@healorbit.com>',
+      from: config.from || process.env.EMAIL_FROM || 'HealOrbit <healorbit.noreply@gmail.com>',
       ...config
     };
 

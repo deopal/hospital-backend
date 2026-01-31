@@ -3,7 +3,7 @@
  * Handles patient profile and settings endpoints
  */
 
-import { getPatientProfile, updatePatientSettings, updatePatientImage } from '../services/patient/patient.service.js';
+import { getPatientProfile, updatePatientSettings, updatePatientImage, getMedicalHistory, getTimeline } from '../services/patient/patient.service.js';
 import { createAppointment, getPatientAppointments, getAppointmentById, getPatientReviews, completeAppointment, cancelAppointment } from '../services/appointment/appointment.service.js';
 import { generatePrescriptionPDF } from '../services/pdf/prescription.service.js';
 import { successResponse, errorResponse, notFoundResponse, badRequestResponse, createdResponse } from '../utils/response.util.js';
@@ -207,6 +207,32 @@ export const downloadPrescription = async (req, res) => {
   }
 };
 
+/**
+ * Get patient's medical history
+ */
+export const getMedicalHistoryHandler = async (req, res) => {
+  try {
+    const result = await getMedicalHistory(req.params.id);
+    return successResponse(res, { medicalHistory: result.medicalHistory });
+  } catch (error) {
+    console.error('Get medical history error:', error);
+    return errorResponse(res, 'Failed to fetch medical history');
+  }
+};
+
+/**
+ * Get patient's appointment timeline
+ */
+export const getTimelineHandler = async (req, res) => {
+  try {
+    const result = await getTimeline(req.params.id);
+    return successResponse(res, { timeline: result.timeline });
+  } catch (error) {
+    console.error('Get timeline error:', error);
+    return errorResponse(res, 'Failed to fetch timeline');
+  }
+};
+
 export default {
   getSettings,
   updateSettings,
@@ -217,5 +243,7 @@ export default {
   getReviews,
   completeAppointmentHandler,
   cancelAppointmentHandler,
-  downloadPrescription
+  downloadPrescription,
+  getMedicalHistoryHandler,
+  getTimelineHandler
 };
