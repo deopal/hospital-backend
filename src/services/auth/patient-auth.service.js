@@ -9,13 +9,14 @@ import {
   generateToken,
   generateUsername,
   sanitizeUserData,
+  generateEmailVerificationCode,
   generateEmailVerificationToken,
   getEmailVerificationExpiry,
   isEmailVerificationExpired
 } from './auth.service.js';
 import { UserRole } from '../../config/constants.js';
 import { sendEmail, isEmailConfigured } from '../email/email.service.js';
-import { emailVerificationTemplate } from '../email/email.templates.js';
+import { emailVerificationCodeTemplate } from '../email/email.templates.js';
 
 /**
  * Register a new patient
@@ -29,7 +30,8 @@ export const registerPatient = async (patientData) => {
     return { error: 'Patient already registered' };
   }
 
-  // Generate email verification token
+  // Generate 6-digit verification code and token for link
+  const emailVerificationCode = generateEmailVerificationCode();
   const emailVerificationToken = generateEmailVerificationToken();
   const emailVerificationExpires = getEmailVerificationExpiry();
 
@@ -44,20 +46,23 @@ export const registerPatient = async (patientData) => {
     gender,
     number,
     isEmailVerified: false,
+    emailVerificationCode,
     emailVerificationToken,
     emailVerificationExpires
   });
 
-  // Send verification email
+  // Send verification email with code and link
   if (isEmailConfigured()) {
     try {
       await sendEmail({
         to: email,
-        subject: 'Verify Your Email - HealOrbit',
-        html: emailVerificationTemplate({
+        subject: 'Your Verification Code - HealOrbit',
+        html: emailVerificationCodeTemplate({
           name: firstName,
+          code: emailVerificationCode,
           verificationToken: emailVerificationToken,
-          isDoctor: false
+          isDoctor: false,
+          email
         })
       });
     } catch (error) {
@@ -67,28 +72,38 @@ export const registerPatient = async (patientData) => {
 
   return {
     success: true,
-    message: 'Registration successful! Please check your email to verify your account.',
-    requiresVerification: true
+    message: 'Registration successful! Please check your email for the verification code.',
+    requiresVerification: true,
+    email
   };
 };
 
 /**
- * Verify patient email
+ * Verify patient email with code
  */
-export const verifyPatientEmail = async (token) => {
-  const patient = await patientRepository.findOne({ emailVerificationToken: token });
+export const verifyPatientEmail = async (email, code) => {
+  const patient = await patientRepository.findByEmail(email);
 
   if (!patient) {
-    return { error: 'Invalid verification token' };
+    return { error: 'Invalid email or code' };
+  }
+
+  if (patient.isEmailVerified) {
+    return { error: 'Email is already verified' };
+  }
+
+  if (patient.emailVerificationCode !== code) {
+    return { error: 'Invalid verification code' };
   }
 
   if (isEmailVerificationExpired(patient.emailVerificationExpires)) {
-    return { error: 'Verification token has expired. Please request a new one.' };
+    return { error: 'Verification code has expired. Please request a new one.' };
   }
 
   // Mark email as verified
   await patientRepository.updateById(patient._id, {
     isEmailVerified: true,
+    emailVerificationCode: null,
     emailVerificationToken: null,
     emailVerificationExpires: null
   });
@@ -97,39 +112,72 @@ export const verifyPatientEmail = async (token) => {
 };
 
 /**
- * Resend verification email
+ * Verify patient email with token (link-based)
  */
-export const resendPatientVerificationEmail = async (email) => {
-  const patient = await patientRepository.findByEmail(email);
+export const verifyPatientEmailByToken = async (token) => {
+  const patient = await patientRepository.findOne({ emailVerificationToken: token });
 
   if (!patient) {
-    // Don't reveal if email exists
-    return { success: true, message: 'If an account exists with this email, a verification link has been sent.' };
+    return { error: 'Invalid verification link' };
   }
 
   if (patient.isEmailVerified) {
     return { error: 'Email is already verified' };
   }
 
-  // Generate new verification token
+  if (isEmailVerificationExpired(patient.emailVerificationExpires)) {
+    return { error: 'Verification link has expired. Please request a new one.' };
+  }
+
+  // Mark email as verified
+  await patientRepository.updateById(patient._id, {
+    isEmailVerified: true,
+    emailVerificationCode: null,
+    emailVerificationToken: null,
+    emailVerificationExpires: null
+  });
+
+  return { success: true, message: 'Email verified successfully! You can now sign in.' };
+};
+
+/**
+ * Resend verification code
+ */
+export const resendPatientVerificationEmail = async (email) => {
+  const patient = await patientRepository.findByEmail(email);
+
+  if (!patient) {
+    // Don't reveal if email exists
+    return { success: true, message: 'If an account exists with this email, a verification code has been sent.' };
+  }
+
+  if (patient.isEmailVerified) {
+    return { error: 'Email is already verified' };
+  }
+
+  // Generate new verification code and token
+  const emailVerificationCode = generateEmailVerificationCode();
   const emailVerificationToken = generateEmailVerificationToken();
   const emailVerificationExpires = getEmailVerificationExpiry();
 
   await patientRepository.updateById(patient._id, {
+    emailVerificationCode,
     emailVerificationToken,
     emailVerificationExpires
   });
 
-  // Send verification email
+  // Send verification email with code and link
   if (isEmailConfigured()) {
     try {
       await sendEmail({
         to: email,
-        subject: 'Verify Your Email - HealOrbit',
-        html: emailVerificationTemplate({
+        subject: 'Your Verification Code - HealOrbit',
+        html: emailVerificationCodeTemplate({
           name: patient.firstName,
+          code: emailVerificationCode,
           verificationToken: emailVerificationToken,
-          isDoctor: false
+          isDoctor: false,
+          email
         })
       });
     } catch (error) {
@@ -137,7 +185,7 @@ export const resendPatientVerificationEmail = async (email) => {
     }
   }
 
-  return { success: true, message: 'If an account exists with this email, a verification link has been sent.' };
+  return { success: true, message: 'If an account exists with this email, a verification code has been sent.' };
 };
 
 /**
@@ -193,5 +241,6 @@ export default {
   registerPatient,
   authenticatePatient,
   verifyPatientEmail,
+  verifyPatientEmailByToken,
   resendPatientVerificationEmail
 };

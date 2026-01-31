@@ -84,7 +84,14 @@ export const isResetTokenExpired = (expiryDate) => {
 };
 
 /**
- * Generate email verification token
+ * Generate 6-digit email verification code
+ */
+export const generateEmailVerificationCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+/**
+ * Generate email verification token (for link-based verification)
  */
 export const generateEmailVerificationToken = () => {
   return crypto.randomBytes(32).toString('hex');
@@ -114,6 +121,7 @@ export default {
   generateResetToken,
   getResetTokenExpiry,
   isResetTokenExpired,
+  generateEmailVerificationCode,
   generateEmailVerificationToken,
   getEmailVerificationExpiry,
   isEmailVerificationExpired

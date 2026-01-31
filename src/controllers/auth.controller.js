@@ -8,12 +8,14 @@ import {
   registerDoctor,
   authenticateDoctor,
   verifyDoctorEmail,
+  verifyDoctorEmailByToken,
   resendDoctorVerificationEmail
 } from '../services/auth/doctor-auth.service.js';
 import {
   registerPatient,
   authenticatePatient,
   verifyPatientEmail,
+  verifyPatientEmailByToken,
   resendPatientVerificationEmail
 } from '../services/auth/patient-auth.service.js';
 import {
@@ -244,19 +246,36 @@ export const resetPassword = async (req, res) => {
 // ============================================
 
 /**
- * Verify email with token
+ * Verify email with code or token
+ * Supports both:
+ * - Code-based: { email, code, role }
+ * - Token-based (link): { token, role }
  */
 export const verifyEmail = async (req, res) => {
   try {
-    const { token, role } = req.body;
+    const { token, code, email, role } = req.body;
 
-    if (!token || !role) {
-      return errorResponse(res, 'Token and role are required', HttpStatus.BAD_REQUEST);
+    if (!role) {
+      return errorResponse(res, 'Role is required', HttpStatus.BAD_REQUEST);
     }
 
-    const result = role === 'doctor'
-      ? await verifyDoctorEmail(token)
-      : await verifyPatientEmail(token);
+    let result;
+
+    // Code-based verification (email + code)
+    if (code && email) {
+      result = role === 'doctor'
+        ? await verifyDoctorEmail(email, code)
+        : await verifyPatientEmail(email, code);
+    }
+    // Token-based verification (link)
+    else if (token) {
+      result = role === 'doctor'
+        ? await verifyDoctorEmailByToken(token)
+        : await verifyPatientEmailByToken(token);
+    }
+    else {
+      return errorResponse(res, 'Either (email + code) or token is required', HttpStatus.BAD_REQUEST);
+    }
 
     if (result.error) {
       return errorResponse(res, result.error, HttpStatus.BAD_REQUEST);

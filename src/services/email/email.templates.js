@@ -382,7 +382,7 @@ export const passwordResetTemplate = (data) => {
 };
 
 /**
- * Email Verification Email
+ * Email Verification Email (with link only - legacy)
  */
 export const emailVerificationTemplate = (data) => {
   const { name, verificationToken, isDoctor } = data;
@@ -432,6 +432,82 @@ export const emailVerificationTemplate = (data) => {
   return baseTemplate(content, `Verify your email to complete registration at HealOrbit`);
 };
 
+/**
+ * Email Verification with Code and Link
+ */
+export const emailVerificationCodeTemplate = (data) => {
+  const { name, code, verificationToken, isDoctor, email } = data;
+  const verifyUrl = verificationToken
+    ? `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&role=${isDoctor ? 'doctor' : 'patient'}&email=${encodeURIComponent(email || '')}`
+    : null;
+
+  const content = `
+    <div style="text-align: center; margin-bottom: 25px;">
+      <div style="display: inline-block; background-color: ${BRAND_COLOR}; border-radius: 50%; padding: 15px; margin-bottom: 15px;">
+        <span style="font-size: 30px; color: white;">✉</span>
+      </div>
+      <h2 style="margin: 0; color: ${TEXT_COLOR}; font-size: 22px; font-weight: 600;">
+        Verify Your Email Address
+      </h2>
+    </div>
+
+    <p style="margin: 0 0 20px; color: ${TEXT_SECONDARY}; font-size: 16px;">
+      Hello ${isDoctor ? 'Dr. ' : ''}${name},
+    </p>
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      Thank you for signing up with HealOrbit! Use the verification code below to complete your registration:
+    </p>
+
+    <!-- Verification Code Box -->
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="display: inline-block; background-color: ${BG_COLOR}; border: 2px dashed ${BRAND_COLOR}; border-radius: 12px; padding: 20px 40px;">
+        <p style="margin: 0 0 8px; color: ${TEXT_SECONDARY}; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">
+          Your Verification Code
+        </p>
+        <p style="margin: 0; color: ${BRAND_COLOR}; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+          ${code}
+        </p>
+      </div>
+    </div>
+
+    <p style="margin: 20px 0; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6; text-align: center;">
+      Enter this code on the verification page to confirm your email.
+    </p>
+
+    ${verifyUrl ? `
+    <div style="text-align: center; margin: 25px 0;">
+      <p style="margin: 0 0 15px; color: ${TEXT_SECONDARY}; font-size: 14px;">
+        Or click the button below to verify directly:
+      </p>
+      ${button('Verify Email Address', verifyUrl)}
+    </div>
+    ` : ''}
+
+    <p style="margin: 20px 0; color: ${TEXT_SECONDARY}; font-size: 14px; text-align: center;">
+      This code will expire in 24 hours.
+    </p>
+
+    <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #166534; font-size: 14px;">
+        <strong>Why verify?</strong> Verifying your email helps us ensure the security of your account and allows us to send you important updates about your appointments.
+      </p>
+    </div>
+
+    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #92400e; font-size: 14px;">
+        <strong>Didn't sign up?</strong> If you didn't create an account with HealOrbit, please ignore this email.
+      </p>
+    </div>
+
+    <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
+      Best regards,<br>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
+    </p>
+  `;
+
+  return baseTemplate(content, `Your HealOrbit verification code is ${code}`);
+};
+
 export default {
   appointmentRequestTemplate,
   appointmentApprovedTemplate,
@@ -440,4 +516,5 @@ export default {
   welcomeTemplate,
   passwordResetTemplate,
   emailVerificationTemplate,
+  emailVerificationCodeTemplate,
 };
