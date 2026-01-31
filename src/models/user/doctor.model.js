@@ -124,6 +124,9 @@ const doctorSchema = new Schema(
       type: Boolean,
       default: false
     },
+    emailVerificationCode: {
+      type: String
+    },
     emailVerificationToken: {
       type: String
     },
