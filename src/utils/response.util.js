@@ -61,6 +61,13 @@ export const unauthorizedResponse = (res, message = 'Unauthorized') => {
 };
 
 /**
+ * Forbidden response (403)
+ */
+export const forbiddenResponse = (res, message = 'Forbidden') => {
+  return errorResponse(res, message, HttpStatus.FORBIDDEN);
+};
+
+/**
  * Conflict response (409)
  */
 export const conflictResponse = (res, message = 'Resource already exists') => {
@@ -86,6 +93,7 @@ export default {
   notFoundResponse,
   badRequestResponse,
   unauthorizedResponse,
+  forbiddenResponse,
   conflictResponse,
   paginatedResponse
 };
