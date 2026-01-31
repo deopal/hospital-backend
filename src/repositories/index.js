@@ -12,3 +12,4 @@ export { notificationRepository } from './notification.repository.js';
 export { messageRepository } from './message.repository.js';
 export { contactRepository } from './contact.repository.js';
 export { videoRoomRepository } from './videoRoom.repository.js';
+export { symptomCheckRepository } from './symptomCheck.repository.js';

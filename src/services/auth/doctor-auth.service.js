@@ -16,7 +16,7 @@ import {
 } from './auth.service.js';
 import { UserRole } from '../../config/constants.js';
 import { sendEmail, isEmailConfigured } from '../email/email.service.js';
-import { emailVerificationCodeTemplate } from '../email/email.templates.js';
+import { emailVerificationCodeTemplate, doctorRegistrationPendingTemplate } from '../email/email.templates.js';
 
 /**
  * Register a new doctor
@@ -68,12 +68,26 @@ export const registerDoctor = async (doctorData) => {
     } catch (error) {
       console.error('[Doctor Auth] Failed to send verification email:', error);
     }
+
+    // Send pending approval email
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Registration Received - Pending Approval - HealOrbit',
+        html: doctorRegistrationPendingTemplate({
+          name: firstName
+        })
+      });
+    } catch (error) {
+      console.error('[Doctor Auth] Failed to send pending approval email:', error);
+    }
   }
 
   return {
     success: true,
-    message: 'Registration successful! Please check your email for the verification code.',
+    message: 'Registration successful! Please check your email for the verification code. Your account is pending admin approval.',
     requiresVerification: true,
+    pendingApproval: true,
     email
   };
 };

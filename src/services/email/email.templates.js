@@ -508,6 +508,158 @@ export const emailVerificationCodeTemplate = (data) => {
   return baseTemplate(content, `Your HealOrbit verification code is ${code}`);
 };
 
+/**
+ * Doctor Registration Pending Approval - Email to Doctor
+ */
+export const doctorRegistrationPendingTemplate = (data) => {
+  const { name } = data;
+
+  const content = `
+    <div style="text-align: center; margin-bottom: 25px;">
+      <div style="display: inline-block; background-color: #f59e0b; border-radius: 50%; padding: 15px; margin-bottom: 15px;">
+        <span style="font-size: 30px; color: white;">⏳</span>
+      </div>
+      <h2 style="margin: 0; color: ${TEXT_COLOR}; font-size: 22px; font-weight: 600;">
+        Registration Received!
+      </h2>
+    </div>
+
+    <p style="margin: 0 0 20px; color: ${TEXT_SECONDARY}; font-size: 16px;">
+      Hello Dr. ${name},
+    </p>
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      Thank you for registering with HealOrbit! We have received your registration request and it is currently <strong>pending approval</strong>.
+    </p>
+
+    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #92400e; font-size: 14px;">
+        <strong>What happens next?</strong> Our admin team will review your credentials and verify your details. This process usually takes 24-48 hours.
+      </p>
+    </div>
+
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      Once your account is approved, you will receive an email notification and you'll be able to:
+    </p>
+
+    <ul style="margin: 0; padding-left: 20px; color: ${TEXT_COLOR}; font-size: 14px; line-height: 1.8;">
+      <li>Set up your profile and availability</li>
+      <li>Start receiving appointment requests from patients</li>
+      <li>Manage your appointments through the dashboard</li>
+      <li>Connect with patients via video consultation</li>
+    </ul>
+
+    <div style="background-color: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #1e40af; font-size: 14px;">
+        <strong>In the meantime:</strong> Please ensure your email is verified. If you haven't already, check your inbox for the verification email and complete the email verification process.
+      </p>
+    </div>
+
+    <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
+      Thank you for choosing HealOrbit!<br>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
+    </p>
+  `;
+
+  return baseTemplate(content, `Your HealOrbit registration is pending approval`);
+};
+
+/**
+ * Doctor Registration Approved - Email to Doctor
+ */
+export const doctorApprovalTemplate = (data) => {
+  const { name } = data;
+
+  const content = `
+    <div style="text-align: center; margin-bottom: 25px;">
+      <div style="display: inline-block; background-color: #10b981; border-radius: 50%; padding: 15px; margin-bottom: 15px;">
+        <span style="font-size: 30px; color: white;">✓</span>
+      </div>
+      <h2 style="margin: 0; color: ${TEXT_COLOR}; font-size: 22px; font-weight: 600;">
+        Welcome to HealOrbit!
+      </h2>
+    </div>
+
+    <p style="margin: 0 0 20px; color: ${TEXT_SECONDARY}; font-size: 16px;">
+      Hello Dr. ${name},
+    </p>
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      Great news! Your registration has been <strong style="color: #10b981;">approved</strong>. You are now a verified healthcare provider on HealOrbit.
+    </p>
+
+    <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #166534; font-size: 14px;">
+        <strong>Your account is now active!</strong> Patients can now find you on our platform and book appointments.
+      </p>
+    </div>
+
+    <h3 style="margin: 25px 0 15px; color: ${TEXT_COLOR}; font-size: 16px; font-weight: 600;">
+      Getting Started:
+    </h3>
+    <ul style="margin: 0; padding-left: 20px; color: ${TEXT_COLOR}; font-size: 14px; line-height: 1.8;">
+      <li>Complete your profile with specialization, experience, and fees</li>
+      <li>Set your availability schedule</li>
+      <li>Add your clinic address and contact details</li>
+      <li>Start accepting appointment requests</li>
+    </ul>
+
+    ${button('Go to Dashboard', `${process.env.FRONTEND_URL || 'http://localhost:3000'}/doctor_signin`)}
+
+    <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
+      Welcome aboard!<br>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
+    </p>
+  `;
+
+  return baseTemplate(content, `Congratulations! Your HealOrbit registration is approved`);
+};
+
+/**
+ * Doctor Registration Rejected - Email to Doctor
+ */
+export const doctorRejectionTemplate = (data) => {
+  const { name, reason } = data;
+
+  const content = `
+    <div style="text-align: center; margin-bottom: 25px;">
+      <div style="display: inline-block; background-color: #ef4444; border-radius: 50%; padding: 15px; margin-bottom: 15px;">
+        <span style="font-size: 30px; color: white;">✗</span>
+      </div>
+      <h2 style="margin: 0; color: ${TEXT_COLOR}; font-size: 22px; font-weight: 600;">
+        Registration Update
+      </h2>
+    </div>
+
+    <p style="margin: 0 0 20px; color: ${TEXT_SECONDARY}; font-size: 16px;">
+      Hello Dr. ${name},
+    </p>
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      We regret to inform you that your registration request has not been approved at this time.
+    </p>
+
+    ${reason ? `
+    <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0 0 8px; color: #991b1b; font-size: 12px; text-transform: uppercase; font-weight: 600;">
+        Reason
+      </p>
+      <p style="margin: 0; color: #991b1b; font-size: 14px;">
+        ${reason}
+      </p>
+    </div>
+    ` : ''}
+
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      If you believe this was a mistake or would like to provide additional information, please contact our support team.
+    </p>
+
+    <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
+      Best regards,<br>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
+    </p>
+  `;
+
+  return baseTemplate(content, `Update on your HealOrbit registration`);
+};
+
 export default {
   appointmentRequestTemplate,
   appointmentApprovedTemplate,
@@ -517,4 +669,7 @@ export default {
   passwordResetTemplate,
   emailVerificationTemplate,
   emailVerificationCodeTemplate,
+  doctorRegistrationPendingTemplate,
+  doctorApprovalTemplate,
+  doctorRejectionTemplate,
 };

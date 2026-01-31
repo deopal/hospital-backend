@@ -7,6 +7,7 @@
 import { adminRepository, doctorRepository, patientRepository, appointmentRepository, contactRepository } from '../../repositories/index.js';
 import { hashPassword, comparePassword, generateToken, sanitizeUserData } from '../auth/auth.service.js';
 import { sendEmail } from '../email/email.service.js';
+import { doctorApprovalTemplate, doctorRejectionTemplate } from '../email/email.templates.js';
 import { AppointmentStatus, AdminPermission } from '../../config/constants.js';
 
 // Get admin email from environment
@@ -212,29 +213,12 @@ export const approveDoctor = async (doctorId) => {
     return { error: 'Doctor not found' };
   }
 
-  // Send approval email to doctor
+  // Send approval email to doctor using template
   try {
     await sendEmail({
       to: doctor.email,
       subject: 'Your HealOrbit Registration Has Been Approved!',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #0d9488;">Congratulations, Dr. ${doctor.firstName}!</h2>
-          <p>Your registration on HealOrbit has been approved by our admin team.</p>
-          <p>You can now:</p>
-          <ul>
-            <li>Receive appointment requests from patients</li>
-            <li>Manage your profile and availability</li>
-            <li>Conduct video consultations</li>
-          </ul>
-          <p>Log in to your dashboard to get started:</p>
-          <a href="${process.env.FRONTEND_URL}/doctor_signin"
-             style="display: inline-block; padding: 12px 24px; background-color: #0d9488; color: white; text-decoration: none; border-radius: 6px;">
-            Go to Dashboard
-          </a>
-          <p style="margin-top: 20px; color: #666;">Thank you for joining HealOrbit!</p>
-        </div>
-      `
+      html: doctorApprovalTemplate({ name: doctor.firstName })
     });
   } catch (error) {
     console.error('Failed to send approval email:', error);
@@ -257,21 +241,12 @@ export const rejectDoctor = async (doctorId, reason) => {
     return { error: 'Doctor not found' };
   }
 
-  // Send rejection email to doctor
+  // Send rejection email to doctor using template
   try {
     await sendEmail({
       to: doctor.email,
       subject: 'HealOrbit Registration Status Update',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #dc2626;">Registration Not Approved</h2>
-          <p>Dear Dr. ${doctor.firstName},</p>
-          <p>We regret to inform you that your registration on HealOrbit has not been approved at this time.</p>
-          ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
-          <p>If you believe this was a mistake or would like more information, please contact our support team at <a href="mailto:healorbit.noreply@gmail.com">healorbit.noreply@gmail.com</a>.</p>
-          <p style="margin-top: 20px; color: #666;">Thank you for your interest in HealOrbit.</p>
-        </div>
-      `
+      html: doctorRejectionTemplate({ name: doctor.firstName, reason })
     });
   } catch (error) {
     console.error('Failed to send rejection email:', error);
