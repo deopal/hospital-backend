@@ -4,8 +4,18 @@
  * Controllers are thin - they only handle request/response
  */
 
-import { registerDoctor, authenticateDoctor } from '../services/auth/doctor-auth.service.js';
-import { registerPatient, authenticatePatient } from '../services/auth/patient-auth.service.js';
+import {
+  registerDoctor,
+  authenticateDoctor,
+  verifyDoctorEmail,
+  resendDoctorVerificationEmail
+} from '../services/auth/doctor-auth.service.js';
+import {
+  registerPatient,
+  authenticatePatient,
+  verifyPatientEmail,
+  resendPatientVerificationEmail
+} from '../services/auth/patient-auth.service.js';
 import {
   generateResetToken,
   getResetTokenExpiry,
@@ -42,6 +52,13 @@ export const doctorSignin = async (req, res) => {
     const result = await authenticateDoctor(email, password);
 
     if (result.error) {
+      // Return verification info if email not verified
+      if (result.requiresVerification) {
+        return errorResponse(res, result.error, HttpStatus.FORBIDDEN, {
+          requiresVerification: true,
+          email: result.email
+        });
+      }
       return errorResponse(res, result.error, HttpStatus.UNAUTHORIZED);
     }
 
@@ -83,6 +100,13 @@ export const patientSignin = async (req, res) => {
     const result = await authenticatePatient(email, password);
 
     if (result.error) {
+      // Return verification info if email not verified
+      if (result.requiresVerification) {
+        return errorResponse(res, result.error, HttpStatus.FORBIDDEN, {
+          requiresVerification: true,
+          email: result.email
+        });
+      }
       return errorResponse(res, result.error, HttpStatus.UNAUTHORIZED);
     }
 
@@ -215,6 +239,62 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+// ============================================
+// Email Verification
+// ============================================
+
+/**
+ * Verify email with token
+ */
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token, role } = req.body;
+
+    if (!token || !role) {
+      return errorResponse(res, 'Token and role are required', HttpStatus.BAD_REQUEST);
+    }
+
+    const result = role === 'doctor'
+      ? await verifyDoctorEmail(token)
+      : await verifyPatientEmail(token);
+
+    if (result.error) {
+      return errorResponse(res, result.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return successResponse(res, {}, result.message);
+  } catch (error) {
+    console.error('Verify email error:', error);
+    return errorResponse(res, 'Something went wrong');
+  }
+};
+
+/**
+ * Resend verification email
+ */
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+      return errorResponse(res, 'Email and role are required', HttpStatus.BAD_REQUEST);
+    }
+
+    const result = role === 'doctor'
+      ? await resendDoctorVerificationEmail(email)
+      : await resendPatientVerificationEmail(email);
+
+    if (result.error) {
+      return errorResponse(res, result.error, HttpStatus.BAD_REQUEST);
+    }
+
+    return successResponse(res, {}, result.message);
+  } catch (error) {
+    console.error('Resend verification email error:', error);
+    return errorResponse(res, 'Something went wrong');
+  }
+};
+
 export default {
   doctorSignup,
   doctorSignin,
@@ -224,5 +304,7 @@ export default {
   patientSignout,
   forgotPassword,
   verifyResetToken,
-  resetPassword
+  resetPassword,
+  verifyEmail,
+  resendVerificationEmail
 };

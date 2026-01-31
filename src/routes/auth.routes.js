@@ -13,7 +13,9 @@ import {
   patientSignout,
   forgotPassword,
   verifyResetToken,
-  resetPassword
+  resetPassword,
+  verifyEmail,
+  resendVerificationEmail
 } from '../controllers/auth.controller.js';
 
 const router = express.Router();
@@ -32,5 +34,9 @@ router.post('/patient/signout', patientSignout);
 router.post('/auth/forgot-password', forgotPassword);
 router.post('/auth/verify-reset-token', verifyResetToken);
 router.post('/auth/reset-password', resetPassword);
+
+// Email verification (shared)
+router.post('/auth/verify-email', verifyEmail);
+router.post('/auth/resend-verification', resendVerificationEmail);
 
 export default router;

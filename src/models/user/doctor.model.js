@@ -120,6 +120,16 @@ const doctorSchema = new Schema(
     passwordResetExpires: {
       type: Date
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailVerificationToken: {
+      type: String
+    },
+    emailVerificationExpires: {
+      type: Date
+    },
     pushSubscription: {
       endpoint: String,
       keys: {

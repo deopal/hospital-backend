@@ -11,6 +11,7 @@ import { JwtConfig } from '../../config/constants.js';
 
 const SALT_ROUNDS = 10;
 const RESET_TOKEN_EXPIRY_HOURS = 1; // Token expires in 1 hour
+const EMAIL_VERIFICATION_EXPIRY_HOURS = 24; // Verification token expires in 24 hours
 
 /**
  * Hash a password
@@ -82,6 +83,27 @@ export const isResetTokenExpired = (expiryDate) => {
   return new Date() > new Date(expiryDate);
 };
 
+/**
+ * Generate email verification token
+ */
+export const generateEmailVerificationToken = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+/**
+ * Get email verification token expiry date
+ */
+export const getEmailVerificationExpiry = () => {
+  return new Date(Date.now() + EMAIL_VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000);
+};
+
+/**
+ * Check if email verification token is expired
+ */
+export const isEmailVerificationExpired = (expiryDate) => {
+  return new Date() > new Date(expiryDate);
+};
+
 export default {
   hashPassword,
   comparePassword,
@@ -91,5 +113,8 @@ export default {
   sanitizeUserData,
   generateResetToken,
   getResetTokenExpiry,
-  isResetTokenExpired
+  isResetTokenExpired,
+  generateEmailVerificationToken,
+  getEmailVerificationExpiry,
+  isEmailVerificationExpired
 };

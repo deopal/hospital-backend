@@ -381,6 +381,57 @@ export const passwordResetTemplate = (data) => {
   return baseTemplate(content, 'Reset your HealOrbit password');
 };
 
+/**
+ * Email Verification Email
+ */
+export const emailVerificationTemplate = (data) => {
+  const { name, verificationToken, isDoctor } = data;
+  const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}&role=${isDoctor ? 'doctor' : 'patient'}`;
+
+  const content = `
+    <div style="text-align: center; margin-bottom: 25px;">
+      <div style="display: inline-block; background-color: ${BRAND_COLOR}; border-radius: 50%; padding: 15px; margin-bottom: 15px;">
+        <span style="font-size: 30px; color: white;">✉</span>
+      </div>
+      <h2 style="margin: 0; color: ${TEXT_COLOR}; font-size: 22px; font-weight: 600;">
+        Verify Your Email Address
+      </h2>
+    </div>
+
+    <p style="margin: 0 0 20px; color: ${TEXT_SECONDARY}; font-size: 16px;">
+      Hello ${isDoctor ? 'Dr. ' : ''}${name},
+    </p>
+    <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      Thank you for signing up with HealOrbit! Please verify your email address to complete your registration and access all features.
+    </p>
+
+    ${button('Verify Email Address', verifyUrl)}
+
+    <p style="margin: 20px 0; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
+      This verification link will expire in 24 hours.
+    </p>
+
+    <div style="background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #166534; font-size: 14px;">
+        <strong>Why verify?</strong> Verifying your email helps us ensure the security of your account and allows us to send you important updates about your appointments.
+      </p>
+    </div>
+
+    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;">
+      <p style="margin: 0; color: #92400e; font-size: 14px;">
+        <strong>Didn't sign up?</strong> If you didn't create an account with HealOrbit, please ignore this email.
+      </p>
+    </div>
+
+    <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
+      Best regards,<br>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
+    </p>
+  `;
+
+  return baseTemplate(content, `Verify your email to complete registration at HealOrbit`);
+};
+
 export default {
   appointmentRequestTemplate,
   appointmentApprovedTemplate,
@@ -388,4 +439,5 @@ export default {
   appointmentCancelledTemplate,
   welcomeTemplate,
   passwordResetTemplate,
+  emailVerificationTemplate,
 };
