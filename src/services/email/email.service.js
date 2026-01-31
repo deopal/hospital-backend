@@ -16,7 +16,7 @@ const EMAIL_CONFIG = {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-  from: process.env.EMAIL_FROM || 'CareSync <noreply@caresync.com>',
+  from: process.env.EMAIL_FROM || 'HealOrbit <noreply@healorbit.com>',
 };
 
 // Create reusable transporter

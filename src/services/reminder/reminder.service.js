@@ -20,7 +20,7 @@ const appointmentReminderTemplate = ({ patientName, doctorName, speciality, sche
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Appointment Reminder - CareSync</title>
+    <title>Appointment Reminder - HealOrbit</title>
   </head>
   <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 0; margin: 0; background-color: #f8fafc;">
     <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -72,13 +72,13 @@ const appointmentReminderTemplate = ({ patientName, doctorName, speciality, sche
         </div>
 
         <p style="color: #6b7280; font-size: 14px; line-height: 1.6;">
-          If you need to reschedule or cancel your appointment, please do so at least 24 hours in advance through the CareSync portal.
+          If you need to reschedule or cancel your appointment, please do so at least 24 hours in advance through the HealOrbit portal.
         </p>
 
         <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
 
         <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">
-          This is an automated reminder from CareSync Hospital Management System.<br>
+          This is an automated reminder from HealOrbit Hospital Management System.<br>
           Please do not reply to this email.
         </p>
       </div>

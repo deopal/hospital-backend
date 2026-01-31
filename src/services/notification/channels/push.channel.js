@@ -77,7 +77,7 @@ export class PushChannel extends BaseChannel {
 
       // Prepare the push payload
       const payload = JSON.stringify({
-        title: title || 'CareSync Notification',
+        title: title || 'HealOrbit Notification',
         body: message,
         icon: '/logo192.png',
         badge: '/logo192.png',

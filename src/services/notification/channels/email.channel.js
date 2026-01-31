@@ -22,7 +22,7 @@ export class EmailChannel extends BaseChannel {
 
     // Email service configuration
     this.config = {
-      from: config.from || process.env.EMAIL_FROM || 'CareSync <noreply@caresync.com>',
+      from: config.from || process.env.EMAIL_FROM || 'HealOrbit <noreply@healorbit.com>',
       ...config
     };
 
@@ -190,7 +190,7 @@ export class EmailChannel extends BaseChannel {
 
       case NotificationType.APPOINTMENT_CANCELLED:
         return {
-          subject: 'Appointment Cancelled - CareSync',
+          subject: 'Appointment Cancelled - HealOrbit',
           html: appointmentCancelledTemplate({
             recipientName: recipientName,
             otherPartyName: senderName,
@@ -225,7 +225,7 @@ export class EmailChannel extends BaseChannel {
         <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f8fafc;">
           <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <div style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); padding: 30px; text-align: center;">
-              <h1 style="margin: 0; color: white; font-size: 24px;">CareSync</h1>
+              <h1 style="margin: 0; color: white; font-size: 24px;">HealOrbit</h1>
             </div>
             <div style="padding: 30px;">
               <p style="color: #6b7280; font-size: 16px;">Hello ${recipientName},</p>
@@ -233,7 +233,7 @@ export class EmailChannel extends BaseChannel {
               <p style="color: #1f2937; line-height: 1.6;">${message}</p>
               <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
               <p style="color: #9ca3af; font-size: 12px;">
-                This is an automated message from CareSync Hospital Management System.
+                This is an automated message from HealOrbit Hospital Management System.
               </p>
             </div>
           </div>

@@ -24,7 +24,7 @@ const initDatabase = async () => {
     
     console.log('📁 Checking collections...\n');
 
-    // Required collections for CareSync
+    // Required collections for HealOrbit
     const requiredCollections = [
       'doctors',
       'patients',
@@ -75,7 +75,7 @@ const initDatabase = async () => {
     console.log('   ✓ contacts indexes');
 
     console.log('\n═══════════════════════════════════════════════');
-    console.log('🎉 CareSync Database initialized successfully!');
+    console.log('🎉 HealOrbit Database initialized successfully!');
     console.log('═══════════════════════════════════════════════\n');
 
     console.log('📋 Collections:');

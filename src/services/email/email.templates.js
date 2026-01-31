@@ -1,7 +1,7 @@
 /**
  * Email Templates
  *
- * Professional HTML email templates for CareSync notifications.
+ * Professional HTML email templates for HealOrbit notifications.
  * Uses inline styles for maximum email client compatibility.
  */
 
@@ -22,7 +22,7 @@ const baseTemplate = (content, preheader = '') => `
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>CareSync Notification</title>
+  <title>HealOrbit Notification</title>
   <!--[if mso]>
   <style type="text/css">
     table { border-collapse: collapse; }
@@ -49,7 +49,7 @@ const baseTemplate = (content, preheader = '') => `
                 <tr>
                   <td style="text-align: center;">
                     <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
-                      CareSync
+                      HealOrbit
                     </h1>
                     <p style="margin: 5px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
                       Your Healthcare Partner
@@ -71,13 +71,13 @@ const baseTemplate = (content, preheader = '') => `
           <tr>
             <td style="padding: 30px 40px; text-align: center;">
               <p style="margin: 0 0 10px; color: ${TEXT_SECONDARY}; font-size: 13px;">
-                This is an automated message from CareSync Hospital Management System.
+                This is an automated message from HealOrbit Hospital Management System.
               </p>
               <p style="margin: 0; color: ${TEXT_SECONDARY}; font-size: 13px;">
                 123 Healthcare Avenue, Medical District, City - 400001
               </p>
               <p style="margin: 10px 0 0; color: ${TEXT_SECONDARY}; font-size: 12px;">
-                &copy; ${new Date().getFullYear()} CareSync. All rights reserved.
+                &copy; ${new Date().getFullYear()} HealOrbit. All rights reserved.
               </p>
             </td>
           </tr>
@@ -158,7 +158,7 @@ export const appointmentRequestTemplate = (data) => {
 
     <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
       Best regards,<br>
-      <strong style="color: ${BRAND_COLOR};">CareSync Team</strong>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
     </p>
   `;
 
@@ -203,7 +203,7 @@ export const appointmentApprovedTemplate = (data) => {
 
     <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
       Best regards,<br>
-      <strong style="color: ${BRAND_COLOR};">CareSync Team</strong>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
     </p>
   `;
 
@@ -245,7 +245,7 @@ export const appointmentCompletedTemplate = (data) => {
 
     <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
       Wishing you good health,<br>
-      <strong style="color: ${BRAND_COLOR};">CareSync Team</strong>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
     </p>
   `;
 
@@ -291,7 +291,7 @@ export const appointmentCancelledTemplate = (data) => {
 
     <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
       Best regards,<br>
-      <strong style="color: ${BRAND_COLOR};">CareSync Team</strong>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
     </p>
   `;
 
@@ -307,7 +307,7 @@ export const welcomeTemplate = (data) => {
   const content = `
     <div style="text-align: center; margin-bottom: 25px;">
       <h2 style="margin: 0; color: ${TEXT_COLOR}; font-size: 24px; font-weight: 600;">
-        Welcome to CareSync! 🎉
+        Welcome to HealOrbit! 🎉
       </h2>
     </div>
 
@@ -315,7 +315,7 @@ export const welcomeTemplate = (data) => {
       Hello ${isDoctor ? 'Dr. ' : ''}${name},
     </p>
     <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
-      Thank you for joining CareSync! We're excited to have you as part of our healthcare community.
+      Thank you for joining HealOrbit! We're excited to have you as part of our healthcare community.
     </p>
 
     <p style="margin: 0 0 20px; color: ${TEXT_COLOR}; font-size: 15px; line-height: 1.6;">
@@ -335,11 +335,11 @@ export const welcomeTemplate = (data) => {
 
     <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
       Welcome aboard!<br>
-      <strong style="color: ${BRAND_COLOR};">CareSync Team</strong>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
     </p>
   `;
 
-  return baseTemplate(content, `Welcome to CareSync, ${isDoctor ? 'Dr. ' : ''}${name}!`);
+  return baseTemplate(content, `Welcome to HealOrbit, ${isDoctor ? 'Dr. ' : ''}${name}!`);
 };
 
 /**
@@ -374,11 +374,11 @@ export const passwordResetTemplate = (data) => {
 
     <p style="margin: 30px 0 0; color: ${TEXT_COLOR}; font-size: 15px;">
       Best regards,<br>
-      <strong style="color: ${BRAND_COLOR};">CareSync Team</strong>
+      <strong style="color: ${BRAND_COLOR};">HealOrbit Team</strong>
     </p>
   `;
 
-  return baseTemplate(content, 'Reset your CareSync password');
+  return baseTemplate(content, 'Reset your HealOrbit password');
 };
 
 export default {

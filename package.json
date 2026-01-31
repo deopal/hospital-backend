@@ -1,7 +1,7 @@
 {
-  "name": "caresync-backend",
+  "name": "healorbit-backend",
   "version": "2.0.0",
-  "description": "CareSync Backend API - Hospital Management System for managing doctors, patients, and appointments",
+  "description": "HealOrbit Backend API - Hospital Management System for managing doctors, patients, and appointments",
   "main": "index.server.js",
   "scripts": {
     "start": "node index.server.js",
@@ -9,7 +9,7 @@
     "db:init": "node scripts/init-db.js"
   },
   "keywords": [
-    "caresync",
+    "healorbit",
     "hospital",
     "healthcare",
     "medical",
